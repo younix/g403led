@@ -1,41 +1,48 @@
 #include <err.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
-#include <libusb.h>
+#include <hid.h>
 
 int
 main(void)
 {
 	int ret = 0;
-	libusb_context *ctx = NULL;
-	libusb_device **devs;
-	libusb_device *dev = NULL;
-	libusb_device_handle *handle = NULL;
+//	struct hid_device_info *devs, *dev;
+	HIDInterface handle;
+	memset(&handle, 0, sizeof handle);
 
-	if (libusb_init(&ctx) < 0)
-		errx(EXIT_FAILURE, "libusb_init");
+	if (hid_init() != HID_RET_SUCCESS)
+		errx(EXIT_FAILURE, "hid_init");
 
-	ssize_t cnt = libusb_get_device_list(ctx, &devs);
-	for (ssize_t i = 0; i < cnt; i++) {
-		libusb_device *device = devs[i];
-		struct libusb_device_descriptor desc;
-		libusb_get_device_descriptor(device, &desc);
+//	devs = hid_enumerate(0x0, 0x0);
+//	for (dev = devs; dev != NULL; dev = dev->next) {
+//		printf("0x%04x 0x%04x %s\n", dev->vendor_id, dev->product_id,
+//		    dev->product_string);
 
-//printf("id: 0x%04x : 0x%04x\n", desc.idVendor, desc.idProduct);
+//		if (dev->vendor_id == 0x046d && dev->product_id == 0xC083) {
+//			printf("found\n");
+//			handle = hid_open(currentDevice.vendorID,
+//			    currentDevice.productID, NULL);
+//		}
+//	}
 
-		if (desc.idVendor == 0x046d && desc.idProduct == 0xC083) {
-			printf("found\n");
-			dev = device;
-		}
-	}
+//	hid_free_enumeration(devs);
 
-	if (dev == NULL)
+	HIDInterfaceMatcher matcher;
+	memset(&matcher, 0, sizeof matcher);
+	matcher.vendor_id  = 0x046d;
+	matcher.product_id = 0xC083;
+
+	ret = hid_open(&handle, 0, &matcher);
+
+	if (ret != HID_RET_SUCCESS)
+		errx(EXIT_FAILURE, "hid_open");
+
+	if (hid_is_opened(&handle) == false)
 		errx(EXIT_FAILURE, "device not found");
-
-	if ((ret = libusb_open(dev, &handle)) != 0)
-		errx(EXIT_FAILURE, "libusb_open");
 
 // * 11:ff:0e:3b : 01 : 01 : 02:02:02 : 02 : 00:00:00:00:00:00:00:00:00:00
 
@@ -46,11 +53,12 @@ main(void)
 //	data.push_back(SortedKeys[kag][gi+i].color.blue);
 //	data.push_back(0x02);
 
-	uint8_t red   = 0xff;
-	uint8_t green = 0x0f;
-	uint8_t blue  = 0x0f;
+	char red   = 0xff;
+	char green = 0x0f;
+	char blue  = 0x0f;
 
-	uint8_t data[10] = {
+	char data[10] = {
+//		0x00,// for hid
 		0x11,
 		0xff,
 		0x0e,
@@ -64,21 +72,12 @@ main(void)
 		0x02
 	};
 
-	libusb_claim_interface(handle, 2);
-
-	ret = libusb_control_transfer(handle, 0x21, 0x09, 0x0211, 1, data, sizeof data, 2000);
+	ret = hid_interrupt_write(&handle, 0, data, sizeof data, 2000);
 	if (ret < 0)
-		errx(EXIT_FAILURE, "libusb_control_transfer: %s", libusb_error_name(ret));
+		errx(EXIT_FAILURE, "hid_write");
 
-	usleep(1000);
-
-	/* data > 20 -> 0x82 */
-	/* data < 20 -> 0x83 */
-	int len = 0;
-	unsigned char buffer[64];
-	ret = libusb_interrupt_transfer(handle, 0x83, buffer, sizeof buffer, &len, 2000);
-
-	printf("len: %d\n", len);
+	hid_close(&handle);
+	hid_cleanup();
 
 	return EXIT_SUCCESS;
 }
