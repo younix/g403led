@@ -69,18 +69,20 @@ int
 main(int argc, char *argv[])
 {
 	int ch, fd;
-	bool lflag = false;
+	bool lflag = true;
 	bool wflag = true;
 	unsigned char red, green, blue;
 
 	while ((ch = getopt(argc, argv, "lwh")) != -1) {
 		switch (ch) {
 		case 'l':
-			lflag = true;
+			if (lflag == false)
+				usage();
 			wflag = false;
 			break;
 		case 'w':
-			wflag = true;
+			if (wflag == false)
+				usage();
 			lflag = false;
 			break;
 		case 'h':
