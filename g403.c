@@ -72,7 +72,6 @@ main(int argc, char *argv[])
 	bool lflag = false;
 	bool wflag = true;
 	unsigned char red, green, blue;
-	const char *errstr;
 
 	while ((ch = getopt(argc, argv, "lwh")) != -1) {
 		switch (ch) {
