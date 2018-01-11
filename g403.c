@@ -27,6 +27,14 @@
 #include <string.h>
 #include <unistd.h>
 
+#define estrtonum(str, num)						\
+	do {								\
+		const char *errstr;					\
+		(num) = strtonum((str), 0, 255, &errstr);		\
+		if (errstr != NULL)					\
+			errx(1, "strtonum: %s: %s", errstr, (str));	\
+	} while (0);
+
 void
 usage(void)
 {
@@ -67,15 +75,9 @@ main(int argc, char *argv[])
 	if ((fd = open(argv[0], O_RDWR)) == -1)
 		err(EXIT_FAILURE, "open: %s", argv[0]);
 
-	red = strtonum(argv[1], 0, 255, &errstr);
-	if (errstr != NULL)
-		errx(1, "strtonum: %s: %s", errstr, argv[1]);
-	green = strtonum(argv[2], 0, 255, &errstr);
-	if (errstr != NULL)
-		errx(1, "strtonum: %s: %s", errstr, argv[1]);
-	blue = strtonum(argv[3], 0, 255, &errstr);
-	if (errstr != NULL)
-		errx(1, "strtonum: %s: %s", errstr, argv[1]);
+	estrtonum(argv[1], red);
+	estrtonum(argv[2], green);
+	estrtonum(argv[3], blue);
 
 	unsigned char data[9] = {
 		0xff,
