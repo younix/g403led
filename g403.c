@@ -38,7 +38,7 @@
 void
 usage(void)
 {
-	fputs("g403 [-l|w] file r g b\n", stderr);
+	fputs("g403 [-h] [-l|-w] uhid red green blue\n", stderr);
 	exit(EXIT_FAILURE);
 }
 
@@ -51,7 +51,7 @@ main(int argc, char *argv[])
 	unsigned char red, green, blue;
 	const char *errstr;
 
-	while ((ch = getopt(argc, argv, "lw")) != -1) {
+	while ((ch = getopt(argc, argv, "lwh")) != -1) {
 		switch (ch) {
 		case 'l':
 			lflag = true;
@@ -61,6 +61,7 @@ main(int argc, char *argv[])
 			wflag = true;
 			lflag = false;
 			break;
+		case 'h':
 		default:
 			usage();
 		}
