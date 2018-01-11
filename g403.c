@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) Jan Klemkow <j.klemkow@wemelug.de>
+ *
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * Jan Klemkow wrote this file.  As long as you retain this notice you can do
+ * whatever you want with this stuff.  If you meet Sebastian Rottmann some day,
+ * and you think this stuff is worth it, you can buy him a beer in return.
+ * Because, I don't drink beer, but he does a lot and helped me with his Windows
+ * machine.
+ */
+
+/*
+ * I apologize at mpi@ for using uhid(4) for this and I promise to change this
+ * programm when uhid(4) finally dies.
+ */
+
 #include <sys/ioctl.h>
 
 #include <dev/usb/usb.h>
@@ -5,33 +21,67 @@
 
 #include <err.h>
 #include <fcntl.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
-int
-main(void)
+void
+usage(void)
 {
-	int fd;
-//	matcher.vendor_id  = 0x046d;
-//	matcher.product_id = 0xC083;
+	fputs("g403 [-l|w] file r g b\n", stderr);
+	exit(EXIT_FAILURE);
+}
 
-	if ((fd = open("/dev/uhid3", O_RDWR)) == -1)
-		err(EXIT_FAILURE, "open");
+int
+main(int argc, char *argv[])
+{
+	int ch, fd;
+	bool lflag = false;
+	bool wflag = true;
+	unsigned char red, green, blue;
+	const char *errstr;
 
-	char red   = 0xff;
-	char green = 0x0f;
-	char blue  = 0x0f;
+	while ((ch = getopt(argc, argv, "lw")) != -1) {
+		switch (ch) {
+		case 'l':
+			lflag = true;
+			wflag = false;
+			break;
+		case 'w':
+			wflag = true;
+			lflag = false;
+			break;
+		default:
+			usage();
+		}
+	}
+	argc -= optind;
+	argv += optind;
 
-	char = 0x0f;
+	if (argc < 4)
+		usage();
 
-	char data[9] = {
+	/* TODO: search dyn. for vid/pid 0x046d/0xC083 ... */
+	if ((fd = open(argv[0], O_RDWR)) == -1)
+		err(EXIT_FAILURE, "open: %s", argv[0]);
+
+	red = strtonum(argv[1], 0, 255, &errstr);
+	if (errstr != NULL)
+		errx(1, "strtonum: %s: %s", errstr, argv[1]);
+	green = strtonum(argv[2], 0, 255, &errstr);
+	if (errstr != NULL)
+		errx(1, "strtonum: %s: %s", errstr, argv[1]);
+	blue = strtonum(argv[3], 0, 255, &errstr);
+	if (errstr != NULL)
+		errx(1, "strtonum: %s: %s", errstr, argv[1]);
+
+	unsigned char data[9] = {
 		0xff,
 		0x0e,
 		0x3b,
-		0x00, // wheel or logo (1 / 0)
-
+		wflag ? 0x00 : 0x01,	/* wheel : logo */
 		0x01,
 		red,
 		green,
