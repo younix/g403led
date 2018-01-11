@@ -36,6 +36,29 @@
 	} while (0);
 
 void
+setcolor(int fd, char target, char red, char green, char blue)
+{
+	struct usb_ctl_report report;
+	unsigned char data[9] = {
+		0xff,
+		0x0e,
+		0x3b,
+		target,	/* wheel or logo */
+		0x01,
+		red,
+		green,
+		blue,
+		0x02
+	};
+
+	report.ucr_report = 0x2;
+	memcpy(report.ucr_data, data, sizeof data);
+
+	if (ioctl(fd, USB_SET_REPORT, &report) == -1)
+		err(EXIT_FAILURE, "ioctl");
+}
+
+void
 usage(void)
 {
 	fputs("g403 [-h] [-l|-w] uhid red green blue\n", stderr);
@@ -80,24 +103,14 @@ main(int argc, char *argv[])
 	estrtonum(argv[2], green);
 	estrtonum(argv[3], blue);
 
-	unsigned char data[9] = {
-		0xff,
-		0x0e,
-		0x3b,
-		wflag ? 0x00 : 0x01,	/* wheel : logo */
-		0x01,
-		red,
-		green,
-		blue,
-		0x02
-	};
+	if (lflag)
+		setcolor(fd, 0x01, red, green, blue);
 
-	struct usb_ctl_report report;
-	report.ucr_report = 0x2;
-	memcpy(report.ucr_data, data, sizeof data);
+	if (lflag && wflag)
+		usleep(1);	/* HACK: Set both does not work w/o usleep(2) */
 
-	if (ioctl(fd, USB_SET_REPORT, &report) == -1)
-		err(EXIT_FAILURE, "ioctl");
+	if (wflag)
+		setcolor(fd, 0x00, red, green, blue);
 
 	if (close(fd) == -1)
 		err(EXIT_FAILURE, "close");
