@@ -11,7 +11,7 @@
 
 /*
  * I apologize at mpi@ for using uhid(4) for this and I promise to change this
- * programm when uhid(4) finally dies.
+ * program when uhid(4) finally dies.
  */
 
 #include <sys/ioctl.h>
