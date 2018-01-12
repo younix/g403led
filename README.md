@@ -1,6 +1,8 @@
 # g403led
 
 Set the LED color of wheel and logo for Logitech gaming mouse.
+This program is made for OpenBSD and don't use any portable API
+like libusb nor libhid.
 
 # Which logitech mouse is supported?
 
