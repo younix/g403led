@@ -1,0 +1,64 @@
+.\"
+.\" Copyright (c) 2017 Jan Klemkow <j.klemkow@wemelug.de>
+.\"
+.\" Permission to use, copy, modify, and distribute this software for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+.\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+.\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+.\" WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+.\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.\"
+.Dd $Mdocdate$
+.Dt NAME SECTION#
+.Os
+.Sh NAME
+.Nm g403
+.Nd set logitech g403 led color
+.Sh SYNOPSIS
+.Nm
+.Op Fl h
+.Op Fl l | Fl w
+.Ar uhid red green blue
+.Sh DESCRIPTION
+The
+.Nm
+utility sets the wheel and logo color of a logitech g403 mouse.
+Other logitech models may also work.
+The
+.Ar uhid
+argument is the corresponding
+.Xr uhid 4
+of the device.
+The arguments
+.Ar red , green
+and
+.Ar blue
+are the color codes.
+Their values are valid between 0 and 255.
+.\" The following requests should be uncommented and used where appropriate.
+.Sh EXIT STATUS
+.Ex -std
+.\" For sections 1, 6, and 8 only.
+.Sh EXAMPLES
+Set both leds to color white:
+.Pp
+.Cm g403 /dev/uhid3 255 255 255
+.Pp
+Turn off the wheel led:
+.Pp
+.Cm g403 -w /dev/uhid3 0 0 0
+.\" .Sh SEE ALSO
+.\" .Xr foobar 1
+.\" .Sh HISTORY
+.Sh AUTHORS
+.An -nosplit
+The
+.Nm
+program was written by
+.An Jan Klemkow Aq Mt j.klemkow@wemelug.de .
+
