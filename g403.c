@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Jan Klemkow <j.klemkow@wemelug.de>
+ * Copyright (c) 2018 Jan Klemkow <j.klemkow@wemelug.de>
  *
  * "THE BEER-WARE LICENSE" (Revision 42):
  * Jan Klemkow wrote this file.  As long as you retain this notice you can do
