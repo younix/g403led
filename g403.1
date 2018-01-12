@@ -40,10 +40,19 @@ and
 .Ar blue
 are the color codes.
 Their values are valid between 0 and 255.
-.\" The following requests should be uncommented and used where appropriate.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl h
+Shows the usage of
+.Nm .
+.It Fl l
+Only sets the color of the logo led.
+.It Fl w
+Only sets the color of the wheel led.
+.El
 .Sh EXIT STATUS
 .Ex -std
-.\" For sections 1, 6, and 8 only.
 .Sh EXAMPLES
 Set both leds to color white:
 .Pp
@@ -52,13 +61,9 @@ Set both leds to color white:
 Turn off the wheel led:
 .Pp
 .Cm g403 -w /dev/uhid3 0 0 0
-.\" .Sh SEE ALSO
-.\" .Xr foobar 1
-.\" .Sh HISTORY
 .Sh AUTHORS
 .An -nosplit
 The
 .Nm
 program was written by
 .An Jan Klemkow Aq Mt j.klemkow@wemelug.de .
-
