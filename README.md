@@ -6,7 +6,7 @@ like libusb nor libhid.
 
 # Which logitech mouse is supported?
 
-At the moment I've just tested "G403 Prodigy Gaming Mouse" but other
+At the moment I've just tested the "G403 Prodigy Gaming Mouse" but other
 mouse devices of Logitech might also work.
 
 # How to build this software?
