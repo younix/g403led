@@ -11,7 +11,7 @@ mouse devices of Logitech might also work.
 
 # How to build this software?
 
-The following commands should work an every OpenBSD system.
+The following commands should work on "every" OpenBSD system.
 
 ```
 git clone https://github.com/younix/g403led
