@@ -13,4 +13,4 @@ clean:
 
 install: all
 	install -m 775 g403 ${PREFIX}/bin
-	install -m 444 g403.1 ${PREFIX}/share/man/man1
+	install -m 444 g403.1 ${PREFIX}/man/man1
